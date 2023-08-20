@@ -4,11 +4,13 @@ import java.io.PrintStream;
 import java.net.URI;
 import java.net.URISyntaxException;
 
+import hudson.util.Secret;
+
 public class DoguOption {
-    public final String DOGU_TOKEN;
+    public final Secret DOGU_TOKEN;
     public final String API_URL;
 
-    public DoguOption(String DoguToken, String ApiUrl) {
+    public DoguOption(Secret DoguToken, String ApiUrl) {
         this.DOGU_TOKEN = DoguToken;
         this.API_URL = ApiUrl;
     }

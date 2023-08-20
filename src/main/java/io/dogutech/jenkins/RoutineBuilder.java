@@ -16,6 +16,7 @@ import hudson.tasks.BuildStepDescriptor;
 import hudson.tasks.Builder;
 import hudson.util.FormValidation;
 import hudson.util.ListBoxModel;
+import hudson.util.Secret;
 import io.dogutech.jenkins.api.ApiClient;
 import io.dogutech.jenkins.api.ApiClient.RunRoutineResponse;
 import io.dogutech.jenkins.api.DoguWebSocketClient;
@@ -31,6 +32,7 @@ import jenkins.model.Jenkins;
 import org.kohsuke.stapler.AncestorInPath;
 import org.kohsuke.stapler.DataBoundConstructor;
 import org.kohsuke.stapler.QueryParameter;
+import org.kohsuke.stapler.interceptor.RequirePOST;
 
 public class RoutineBuilder extends Builder {
 
@@ -69,12 +71,12 @@ public class RoutineBuilder extends Builder {
                         Collections.<DomainRequirement>emptyList()),
                 CredentialsMatchers.withId(credentialsId));
 
-        String token;
+        Secret accessTokenSecret;
         if (credential == null) {
             logger.println("Failed to find credentials with ID: " + credentialsId);
             return false;
         } else {
-            token = credential.getSecret().getPlainText();
+            accessTokenSecret = credential.getSecret();
         }
 
         String apiUrl = "https://api.dogutech.io";
@@ -92,7 +94,7 @@ public class RoutineBuilder extends Builder {
         } catch (IOException | InterruptedException e) {
         }
 
-        DoguOption doguOption = new DoguOption(apiUrl, token);
+        DoguOption doguOption = new DoguOption(accessTokenSecret, apiUrl);
 
         RunRoutineResponse routine;
         try {
@@ -176,20 +178,39 @@ public class RoutineBuilder extends Builder {
             return "Run Dogu Routine";
         }
 
+        @RequirePOST
         public FormValidation doCheckRoutineId(@QueryParameter String value) {
+            try {
+                Jenkins.get().checkPermission(Jenkins.READ);
+            }
+            catch (Exception e) {
+                return FormValidation.error("Please login");
+            }
+
             if (value.isEmpty()) {
                 return FormValidation.error("Please enter RoutineID");
             }
+            
             return FormValidation.ok();
         }
 
+        @RequirePOST
         public FormValidation doCheckCredentialsId(@QueryParameter String value) {
+            try {
+                Jenkins.get().checkPermission(Jenkins.READ);
+            }
+            catch (Exception e) {
+                return FormValidation.error("Please login");
+            }
+
             if (value.isEmpty()) {
                 return FormValidation.error("Please select credentials");
             }
+
             return FormValidation.ok();
         }
 
+        @RequirePOST
         public ListBoxModel doFillCredentialsIdItems(@AncestorInPath Item item, @QueryParameter String credentialsId) {
             StandardListBoxModel result = new StandardListBoxModel();
             if (item == null || !item.hasPermission(Item.CONFIGURE)) {

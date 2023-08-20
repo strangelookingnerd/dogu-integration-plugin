@@ -36,7 +36,7 @@ public class ApiClient {
         HttpRequest request = HttpRequest.newBuilder()
                 .uri(uri)
                 .header("Content-Type", "application/json")
-                .header("Authorization", "Bearer " + option.DOGU_TOKEN)
+                .header("Authorization", "Bearer " + option.DOGU_TOKEN.getPlainText())
                 .POST(HttpRequest.BodyPublishers.ofString("{}"))
                 .build();
 
@@ -65,7 +65,7 @@ public class ApiClient {
 
         URI uri = new URI(url);
         DoguWebSocketClient client = new DoguWebSocketClient(uri, logger);
-        client.addHeader("Authorization", "Bearer " + option.DOGU_TOKEN);
+        client.addHeader("Authorization", "Bearer " + option.DOGU_TOKEN.getPlainText());
         client.connect();
 
         return client;
