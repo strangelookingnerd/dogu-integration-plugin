@@ -58,13 +58,13 @@ public class RoutineBuilder extends Builder {
     }
 
     @Override
-    public boolean perform(AbstractBuild build, Launcher launcher, BuildListener listener) {
+    public boolean perform(AbstractBuild<?,?> build, Launcher launcher, BuildListener listener) {
         PrintStream logger = listener.getLogger();
 
         DoguCredential credential = CredentialsMatchers.firstOrNull(
                 CredentialsProvider.lookupCredentials(
                         DoguCredential.class,
-                        Jenkins.getInstance(),
+                        Jenkins.get(),
                         ACL.SYSTEM,
                         Collections.<DomainRequirement>emptyList()),
                 CredentialsMatchers.withId(credentialsId));
