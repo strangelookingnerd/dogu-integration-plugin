@@ -1,4 +1,4 @@
-# dogu-jenkins-plugin
+# dogu-integration-plugin
 
 ## Getting Started
 

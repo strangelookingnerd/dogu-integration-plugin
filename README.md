@@ -1,4 +1,4 @@
-# Dogu Jenkins Plugin
+# Dogu Integration Plugin
 
 ## Description
 
