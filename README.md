@@ -2,7 +2,7 @@
 
 ## Description
 
-This plugin helps to integrate [Dogu](https://github.com/dogu-team/dogu) with Jenkins.
+This plugin helps to integrate Jenkins with [Dogu](https://github.com/dogu-team/dogu).
 
 ## Features
 
