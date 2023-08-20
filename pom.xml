@@ -8,7 +8,7 @@
     <relativePath />
   </parent>
   <groupId>io.dogutech.jenkins</groupId>
-  <artifactId>dogu-jenkins-plugin</artifactId>
+  <artifactId>dogu-jenkins</artifactId>
   <version>${revision}${changelist}</version>
   <packaging>hpi</packaging>
   <name>TODO Plugin</name>
@@ -63,32 +63,7 @@
       <artifactId>credentials</artifactId>
       <version>1271.v54b_1c2c6388a_</version>
     </dependency>
-    <dependency>
-      <groupId>org.jenkins-ci.plugins</groupId>
-      <artifactId>structs</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.jenkins-ci.plugins.workflow</groupId>
-      <artifactId>workflow-basic-steps</artifactId>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.jenkins-ci.plugins.workflow</groupId>
-      <artifactId>workflow-cps</artifactId>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.jenkins-ci.plugins.workflow</groupId>
-      <artifactId>workflow-durable-task-step</artifactId>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.jenkins-ci.plugins.workflow</groupId>
-      <artifactId>workflow-job</artifactId>
-      <scope>test</scope>
-    </dependency>
   </dependencies>
-
   <repositories>
     <repository>
       <id>repo.jenkins-ci.org</id>
