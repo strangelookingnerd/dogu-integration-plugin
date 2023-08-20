@@ -5,7 +5,6 @@ import com.cloudbees.plugins.credentials.CredentialsScope;
 import com.cloudbees.plugins.credentials.impl.BaseStandardCredentials;
 import hudson.Extension;
 import hudson.util.Secret;
-
 import org.kohsuke.stapler.DataBoundConstructor;
 
 public class DoguCredential extends BaseStandardCredentials {

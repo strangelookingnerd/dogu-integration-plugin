@@ -1,11 +1,10 @@
 package io.dogutech.jenkins;
 
-import io.dogutech.jenkins.ApiClient;
-
 import com.cloudbees.plugins.credentials.CredentialsMatchers;
 import com.cloudbees.plugins.credentials.CredentialsProvider;
 import com.cloudbees.plugins.credentials.common.StandardListBoxModel;
 import com.cloudbees.plugins.credentials.domains.DomainRequirement;
+import hudson.EnvVars;
 import hudson.Extension;
 import hudson.Launcher;
 import hudson.model.AbstractBuild;
@@ -17,9 +16,17 @@ import hudson.tasks.BuildStepDescriptor;
 import hudson.tasks.Builder;
 import hudson.util.FormValidation;
 import hudson.util.ListBoxModel;
-
+import io.dogutech.jenkins.api.ApiClient;
+import io.dogutech.jenkins.api.ApiClient.RunRoutineResponse;
+import io.dogutech.jenkins.api.DoguWebSocketClient;
+import java.io.IOException;
 import java.io.PrintStream;
 import java.util.Collections;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 import jenkins.model.Jenkins;
 import org.kohsuke.stapler.AncestorInPath;
 import org.kohsuke.stapler.DataBoundConstructor;
@@ -62,21 +69,93 @@ public class RoutineBuilder extends Builder {
                         Collections.<DomainRequirement>emptyList()),
                 CredentialsMatchers.withId(credentialsId));
 
-
         if (credential == null) {
             logger.println("Failed to find credentials with ID: " + credentialsId);
             return false;
+        } else {
+            DoguOption.DOGU_TOKEN = credential.getSecret().getPlainText();
         }
 
         try {
-            ApiClient.runRoutine(projectId, routineId, credentialsId);
+            EnvVars envVars = build.getEnvironment(listener);
+            envVars.overrideAll(build.getBuildVariables());
+
+            String apiUrl = envVars.get("DOGU_API_URL");
+
+            if (apiUrl != null) {
+                DoguOption.API_URL = apiUrl;
+            }
+
+            logger.println("API URL: " + DoguOption.API_URL);
+        } catch (IOException | InterruptedException e) {
+        }
+
+        RunRoutineResponse routine;
+        try {
+            routine = ApiClient.runRoutine(projectId, routineId);
+            logger.println("Spawn pipeline, project-id: " + projectId + ", routine-id: " + routineId
+                    + " routine-pipeline-id: " + routine.routinePipelineId);
         } catch (Exception e) {
-            logger.println("ERROR: " + e.getMessage());
+            logger.println("Error: " + e.getMessage());
             e.printStackTrace(logger);
             return false;
         }
 
-        return true;
+        ExecutorService executorService = Executors.newSingleThreadExecutor();
+        Future<Integer> future = executorService.submit(new Callable<Integer>() {
+            @Override
+            public Integer call() {
+                DoguWebSocketClient client;
+
+                try {
+                    client = ApiClient.connectRoutine(logger, projectId, routineId, routine.routinePipelineId);
+                } catch (Exception e) {
+                    logger.println("Error: " + e.getMessage());
+                    e.printStackTrace(logger);
+                    return 1;
+                }
+
+                while (true) {
+                    if (Thread.currentThread().isInterrupted()) {
+                        return 1;
+                    }
+
+                    try {
+                        switch (client.state) {
+                            case NONE:
+                                break;
+                            case SUCCESS:
+                                logger.println("Success");
+                                return 0;
+                            case FAILURE:
+                                logger.println("Failure");
+                                return 1;
+                        }
+
+                        Thread.sleep(1000);
+                    } catch (InterruptedException e) {
+                        client.close(1006);
+                        return 1;
+                    }
+                }
+            }
+        });
+
+        int result;
+        try {
+            result = future.get();
+        } catch (InterruptedException e) {
+            logger.println("Cancelled");
+            future.cancel(true);
+            return false;
+        } catch (ExecutionException e) {
+            logger.println("Error " + e.getCause());
+            return false;
+        } finally {
+            executorService.shutdown();
+        }
+
+        return result == 0 ? true : false;
     }
 
     @Extension
@@ -111,10 +190,10 @@ public class RoutineBuilder extends Builder {
             if (item == null || !item.hasPermission(Item.CONFIGURE)) {
                 return result.includeCurrentValue(credentialsId);
             }
-            
+
             return result.includeEmptyValue()
-                .includeAs(ACL.SYSTEM, item, DoguCredential.class)
-                .includeCurrentValue(credentialsId);
+                    .includeAs(ACL.SYSTEM, item, DoguCredential.class)
+                    .includeCurrentValue(credentialsId);
         }
     }
 }
