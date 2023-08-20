@@ -1,14 +1,17 @@
-# dogu-jenkins-plugin
+# Dogu Jenkins Plugin
 
-## Getting Started
+## Description
 
-1. mvn hpi:run
+This plugin helps to integrate [Dogu](https://github.com/dogu-team/dogu) with Jenkins.
 
-## Rebuild
+## Features
 
-1. mvn clean
-2. mvn spotless:apply
+- Run routine jobs on Jenkins
 
 ## License
 
 MIT
+
+## Contact
+
+contact@dogutech.io
