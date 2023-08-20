@@ -58,6 +58,7 @@ public class DoguWebSocketClient extends WebSocketClient {
                         + pipelineState.resultUrl);
                 state = State.FAILURE;
                 break;
+            default:
         }
     }
 

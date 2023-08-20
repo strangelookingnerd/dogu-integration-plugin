@@ -21,8 +21,9 @@ public class ApiClient {
         public String createdAt;
     }
 
-    public static RunRoutineResponse runRoutine(String projectId, String routineId) throws Exception {
-        String url = DoguOption.API_URL + "/v1/projects/" + projectId + "/routines/" + routineId + "/pipelines";
+    public static RunRoutineResponse runRoutine(String projectId, String routineId, DoguOption option)
+            throws Exception {
+        String url = option.API_URL + "/v1/projects/" + projectId + "/routines/" + routineId + "/pipelines";
         URI uri;
 
         try {
@@ -35,7 +36,7 @@ public class ApiClient {
         HttpRequest request = HttpRequest.newBuilder()
                 .uri(uri)
                 .header("Content-Type", "application/json")
-                .header("Authorization", "Bearer " + DoguOption.DOGU_TOKEN)
+                .header("Authorization", "Bearer " + option.DOGU_TOKEN)
                 .POST(HttpRequest.BodyPublishers.ofString("{}"))
                 .build();
 
@@ -57,13 +58,14 @@ public class ApiClient {
     }
 
     public static DoguWebSocketClient connectRoutine(
-            PrintStream logger, String projectId, String routineId, int routinePipelineId) throws Exception {
-        String url = DoguOption.getWebSocketUrl(logger) + "/v1/pipeline-state?projectId=" + projectId + "&routineId="
+            PrintStream logger, String projectId, String routineId, int routinePipelineId, DoguOption option)
+            throws Exception {
+        String url = option.getWebSocketUrl(logger) + "/v1/pipeline-state?projectId=" + projectId + "&routineId="
                 + routineId + "&pipelineId=" + routinePipelineId;
 
         URI uri = new URI(url);
         DoguWebSocketClient client = new DoguWebSocketClient(uri, logger);
-        client.addHeader("Authorization", "Bearer " + DoguOption.DOGU_TOKEN);
+        client.addHeader("Authorization", "Bearer " + option.DOGU_TOKEN);
         client.connect();
 
         return client;

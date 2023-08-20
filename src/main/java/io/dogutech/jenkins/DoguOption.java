@@ -5,10 +5,15 @@ import java.net.URI;
 import java.net.URISyntaxException;
 
 public class DoguOption {
-    public static String DOGU_TOKEN = "";
-    public static String API_URL = "https://api.dogutech.io";
+    public final String DOGU_TOKEN;
+    public final String API_URL;
 
-    public static String getWebSocketUrl(PrintStream logger) {
+    public DoguOption(String DoguToken, String ApiUrl) {
+        this.DOGU_TOKEN = DoguToken;
+        this.API_URL = ApiUrl;
+    }
+
+    public String getWebSocketUrl(PrintStream logger) {
         URI apiURI;
         try {
             apiURI = new URI(API_URL);

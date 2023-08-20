@@ -69,30 +69,34 @@ public class RoutineBuilder extends Builder {
                         Collections.<DomainRequirement>emptyList()),
                 CredentialsMatchers.withId(credentialsId));
 
+        String token;
         if (credential == null) {
             logger.println("Failed to find credentials with ID: " + credentialsId);
             return false;
         } else {
-            DoguOption.DOGU_TOKEN = credential.getSecret().getPlainText();
+            token = credential.getSecret().getPlainText();
         }
 
+        String apiUrl = "https://api.dogutech.io";
         try {
             EnvVars envVars = build.getEnvironment(listener);
             envVars.overrideAll(build.getBuildVariables());
 
-            String apiUrl = envVars.get("DOGU_API_URL");
+            String customApiUrl = envVars.get("DOGU_API_URL");
 
-            if (apiUrl != null) {
-                DoguOption.API_URL = apiUrl;
+            if (customApiUrl != null) {
+                apiUrl = customApiUrl;
             }
 
-            logger.println("API URL: " + DoguOption.API_URL);
+            logger.println("API URL: " + apiUrl);
         } catch (IOException | InterruptedException e) {
         }
 
+        DoguOption doguOption = new DoguOption(apiUrl, token);
+
         RunRoutineResponse routine;
         try {
-            routine = ApiClient.runRoutine(projectId, routineId);
+            routine = ApiClient.runRoutine(projectId, routineId, doguOption);
             logger.println("Spawn pipeline, project-id: " + projectId + ", routine-id: " + routineId
                     + " routine-pipeline-id: " + routine.routinePipelineId);
         } catch (Exception e) {
@@ -108,7 +112,8 @@ public class RoutineBuilder extends Builder {
                 DoguWebSocketClient client;
 
                 try {
-                    client = ApiClient.connectRoutine(logger, projectId, routineId, routine.routinePipelineId);
+                    client = ApiClient.connectRoutine(
+                            logger, projectId, routineId, routine.routinePipelineId, doguOption);
                 } catch (Exception e) {
                     logger.println("Error: " + e.getMessage());
                     e.printStackTrace(logger);
