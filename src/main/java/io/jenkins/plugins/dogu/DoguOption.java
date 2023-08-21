@@ -1,10 +1,9 @@
-package io.dogutech.jenkins;
+package io.jenkins.plugins.dogu;
 
+import hudson.util.Secret;
 import java.io.PrintStream;
 import java.net.URI;
 import java.net.URISyntaxException;
-
-import hudson.util.Secret;
 
 public class DoguOption {
     public final Secret DOGU_TOKEN;

@@ -11,7 +11,7 @@
   <artifactId>dogu-integration</artifactId>
   <version>${revision}${changelist}</version>
   <packaging>hpi</packaging>
-  <name>TODO Plugin</name>
+  <name>Dogu Integration</name>
   <url>https://github.com/jenkinsci/${project.artifactId}-plugin</url>
   <licenses>
     <license>
@@ -41,7 +41,7 @@
         <!-- Pick up common dependencies for the selected LTS line: https://github.com/jenkinsci/bom#usage -->
         <groupId>io.jenkins.tools.bom</groupId>
         <artifactId>bom-2.387.x</artifactId>
-        <version>2329.v078520e55c19</version>
+        <version>2278.v47b_4508e256a</version>
         <type>pom</type>
         <scope>import</scope>
       </dependency>
@@ -61,9 +61,9 @@
     <dependency>
       <groupId>org.jenkins-ci.plugins</groupId>
       <artifactId>credentials</artifactId>
-      <version>1271.v54b_1c2c6388a_</version>
     </dependency>
   </dependencies>
+
   <repositories>
     <repository>
       <id>repo.jenkins-ci.org</id>

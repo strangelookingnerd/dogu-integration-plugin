@@ -1,4 +1,4 @@
-package io.dogutech.jenkins.api;
+package io.jenkins.plugins.dogu.api;
 
 import com.google.gson.Gson;
 import java.io.PrintStream;

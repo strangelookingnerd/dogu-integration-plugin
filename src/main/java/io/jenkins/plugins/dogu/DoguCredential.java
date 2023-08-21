@@ -1,4 +1,4 @@
-package io.dogutech.jenkins;
+package io.jenkins.plugins.dogu;
 
 import com.cloudbees.plugins.credentials.CredentialsDescriptor;
 import com.cloudbees.plugins.credentials.CredentialsScope;

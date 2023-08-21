@@ -1,4 +1,4 @@
-package io.dogutech.jenkins;
+package io.jenkins.plugins.dogu;
 
 import com.cloudbees.plugins.credentials.CredentialsMatchers;
 import com.cloudbees.plugins.credentials.CredentialsProvider;
@@ -17,9 +17,9 @@ import hudson.tasks.Builder;
 import hudson.util.FormValidation;
 import hudson.util.ListBoxModel;
 import hudson.util.Secret;
-import io.dogutech.jenkins.api.ApiClient;
-import io.dogutech.jenkins.api.ApiClient.RunRoutineResponse;
-import io.dogutech.jenkins.api.DoguWebSocketClient;
+import io.jenkins.plugins.dogu.api.ApiClient;
+import io.jenkins.plugins.dogu.api.ApiClient.RunRoutineResponse;
+import io.jenkins.plugins.dogu.api.DoguWebSocketClient;
 import java.io.IOException;
 import java.io.PrintStream;
 import java.util.Collections;
@@ -34,14 +34,14 @@ import org.kohsuke.stapler.DataBoundConstructor;
 import org.kohsuke.stapler.QueryParameter;
 import org.kohsuke.stapler.interceptor.RequirePOST;
 
-public class RoutineBuilder extends Builder {
+public class DoguRoutineBuilder extends Builder {
 
     private final String projectId;
     private final String routineId;
     private final String credentialsId;
 
     @DataBoundConstructor
-    public RoutineBuilder(String projectId, String routineId, String credentialsId) {
+    public DoguRoutineBuilder(String projectId, String routineId, String credentialsId) {
         this.projectId = projectId;
         this.routineId = routineId;
         this.credentialsId = credentialsId;
@@ -60,15 +60,12 @@ public class RoutineBuilder extends Builder {
     }
 
     @Override
-    public boolean perform(AbstractBuild<?,?> build, Launcher launcher, BuildListener listener) {
+    public boolean perform(AbstractBuild<?, ?> build, Launcher launcher, BuildListener listener) {
         PrintStream logger = listener.getLogger();
 
         DoguCredential credential = CredentialsMatchers.firstOrNull(
                 CredentialsProvider.lookupCredentials(
-                        DoguCredential.class,
-                        Jenkins.get(),
-                        ACL.SYSTEM,
-                        Collections.<DomainRequirement>emptyList()),
+                        DoguCredential.class, Jenkins.get(), ACL.SYSTEM, Collections.<DomainRequirement>emptyList()),
                 CredentialsMatchers.withId(credentialsId));
 
         Secret accessTokenSecret;
@@ -182,15 +179,14 @@ public class RoutineBuilder extends Builder {
         public FormValidation doCheckRoutineId(@QueryParameter String value) {
             try {
                 Jenkins.get().checkPermission(Jenkins.READ);
-            }
-            catch (Exception e) {
+            } catch (Exception e) {
                 return FormValidation.error("Please login");
             }
 
             if (value.isEmpty()) {
                 return FormValidation.error("Please enter RoutineID");
             }
-            
+
             return FormValidation.ok();
         }
 
@@ -198,8 +194,7 @@ public class RoutineBuilder extends Builder {
         public FormValidation doCheckCredentialsId(@QueryParameter String value) {
             try {
                 Jenkins.get().checkPermission(Jenkins.READ);
-            }
-            catch (Exception e) {
+            } catch (Exception e) {
                 return FormValidation.error("Please login");
             }
 
