@@ -1,4 +1,4 @@
-package io.jenkins.plugins.dogu;
+package io.jenkins.plugins.dogu.credential;
 
 import com.cloudbees.plugins.credentials.CredentialsDescriptor;
 import com.cloudbees.plugins.credentials.CredentialsScope;
@@ -27,7 +27,7 @@ public class DoguCredential extends BaseStandardCredentials {
 
         @Override
         public String getDisplayName() {
-            return "Dogu Access Token";
+            return "Dogu access token";
         }
     }
 }

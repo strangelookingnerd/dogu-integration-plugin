@@ -10,7 +10,7 @@ This plugin helps to integrate jenkins with [Dogu](https://github.com/dogu-team/
 
 ### Dogu Credential
 
-You can add Dogu Access Token to Jenkins credential store. [Dogu Organization Token](https://docs.dogutech.io/management/organization/settings#access-token) and [Dogu Project Token](https://docs.dogutech.io/management/project/settings#access-token) are supported.
+You can add Dogu access token to Jenkins credential store. [Dogu Organization Token](https://docs.dogutech.io/management/organization/settings#access-token) and [Dogu Project Token](https://docs.dogutech.io/management/project/settings#access-token) are supported.
 
 ### Dogu Run Routine Build Step
 
@@ -35,6 +35,11 @@ When you add a Dogu Credential, it will be added to the Jenkins credential store
 
 1. mvn spotless:apply
 2. mvn clean verify
+3. mvn dependency:analyze
+
+### Install Plugins Manually
+
+1. Pipeline
 
 ## License
 

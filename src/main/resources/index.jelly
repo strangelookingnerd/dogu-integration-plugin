@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?jelly escape-by-default='true'?>
 <div>
-    Dogu Integration Plugin helps you to integrate jenkins with Dogu
+    This plugin helps you to integrate jenkins with Dogu
 </div>
